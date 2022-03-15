@@ -1,0 +1,3 @@
+#ifndef WORDLE_DICTIONARY_H
+#define WORDLE_DICTIONARY_H
+#endif

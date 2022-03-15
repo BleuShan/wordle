@@ -1,7 +1,4 @@
- target_sources(
-  ${PROJECT_NAME}
-  PUBLIC
-  dictionary_manager.h
+current_project_sources(
   PRIVATE
   dictionary_manager.cc
 )

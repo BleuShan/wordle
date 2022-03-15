@@ -1,7 +1,4 @@
- target_sources(
-  ${PROJECT_NAME}
-  PUBLIC
-  word.h
+current_project_sources(
   PRIVATE
   word.cc
 )

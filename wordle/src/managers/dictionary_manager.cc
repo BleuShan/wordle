@@ -1,3 +1,3 @@
-#include "dictionary_manager.h"
+#include "wordle/managers/dictionary_manager.h"
 
 namespace wordle::managers {}  // namespace wordle::managers

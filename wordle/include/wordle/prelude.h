@@ -3,7 +3,7 @@
 
 #if defined(_WIN32) || defined(__CYGWIN__)
   #ifndef WORDLE_PUBLIC_API
-    #ifdef WORDLE_BUILD
+    #ifdef WORDLE_EXPORTS
       #define WORDLE_PUBLIC_API __declspec(dllexport)
     #else
       #define WORDLE_PUBLIC_API __declspec(dllimport)
