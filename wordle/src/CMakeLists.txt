@@ -30,6 +30,13 @@ target_sources(
   PUBLIC
   prelude.h
   wordle.h
-  PRIVATE
-  wordle.cc
+)
+
+add_subdirectory(entities)
+add_subdirectory(managers)
+
+
+target_link_libraries(
+  ${PROJECT_NAME}
+  simdjson
 )

@@ -7,3 +7,8 @@ target_sources(
   PRIVATE
   main.cc
 )
+
+target_link_libraries(
+  ${SOLVER_EXECUTABLE_NAME}
+  ${PROJECT_NAME}
+)
