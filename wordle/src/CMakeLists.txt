@@ -1,0 +1,35 @@
+string(TOUPPER ${PROJECT_NAME} MACRO_PREFIX)
+
+add_library(${PROJECT_NAME} SHARED)
+
+set_target_properties(
+  ${PROJECT_NAME}
+  PROPERTIES
+  DEFINE_SYMBOL ${MACRO_PREFIX}_BUILD
+  VERSION ${PROJECT_VERSION}
+  SOVERSION 1
+  LANGUAGE CXX)
+
+target_include_directories(
+  ${PROJECT_NAME}
+  PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}>
+  $<INSTALL_INTERFACE:include>
+)
+
+set_target_properties(
+  ${PROJECT_NAME}
+  PROPERTIES
+  C_VISIBILITY_PRESET hidden
+  CXX_VISIBILITY_PRESET hidden
+  VISIBILITY_INLINES_HIDDEN ON
+)
+
+target_sources(
+  ${PROJECT_NAME}
+  PUBLIC
+  prelude.h
+  wordle.h
+  PRIVATE
+  wordle.cc
+)
