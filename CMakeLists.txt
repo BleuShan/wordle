@@ -5,10 +5,15 @@ include(WorkspaceEnvironment)
 
 project(${WORKSPACE_NAME})
 
-if(BUILD_TESTS)
+include(WorkspaceOptions)
+
+if(BUILD_TESTING)
   enable_testing()
+  include(Dart)
+  include(GoogleTest)
 endif()
 
 include(GNUInstallDirs)
 
+add_subdirectory(extern)
 add_subdirectory(wordle)

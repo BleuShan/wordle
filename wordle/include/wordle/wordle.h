@@ -3,6 +3,5 @@
 
 #include "entities/word.h"
 #include "managers/dictionary_manager.h"
-#include "prelude.h"
 
 #endif

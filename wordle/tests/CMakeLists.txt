@@ -1,9 +1,7 @@
-add_executable(
-  ${PROJECT_NAME}_tests
-  main.cc
-)
-target_link_libraries(
-  ${PROJECT_NAME}_tests
-  gtest_main
+test_target(
+  smoke_test
+  SOURCES
+  smoke_test.cc
+  LINK_LIBRARIES
   ${PROJECT_NAME}
 )

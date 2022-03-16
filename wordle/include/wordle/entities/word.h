@@ -3,7 +3,7 @@
 
 #include <string_view>
 
-#include "wordle/prelude.h"
+#include "../prelude.h"
 
 namespace wordle::entities {
 class WORDLE_PUBLIC_API Word {
