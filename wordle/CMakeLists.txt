@@ -1,12 +1,13 @@
 library_project(
   wordle
   LINK_LIBRARIES
-  simdjson
+  simdjson::simdjson
 )
 
+add_sources(
+  SUBDIRECTORY src
+  PRIVATE
+  dictionary.cc
+)
 
-add_subdirectory(src)
-
-if(BUILD_TESTING)
-  add_subdirectory(tests)
-endif()
+add_test_suite(dictionary)
