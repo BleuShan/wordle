@@ -105,7 +105,7 @@ endfunction()
 
 function(workspace_helpers_set_target_pdb_properties name)
   get_target_property(pdb_debug_postfix ${name} DEBUG_POSTFIX)
-  
+
   if(${pdb_debug_postfix} STREQUAL "pdb_debug_postfix-NOTFOUND")
     unset(pdb_debug_postfix)
   endif()
@@ -422,7 +422,7 @@ endfunction()
 function(add_sources)
     set(flags)
     set(args TARGET SUBDIRECTORY)
-    set(file_list_types INTERFACE PUBLIC  PRIVATE)
+    set(file_list_types INTERFACE PUBLIC PRIVATE)
     set(list_args ${file_list_types})
 
     workspace_helpers_parse_arguments_variable_name(
@@ -483,4 +483,17 @@ function(add_sources)
     endif()
 
     target_sources(${target} ${sources})
+endfunction()
+
+function(add_packages)
+    message("${VCPKG_EXECUTABLE} install ${name}")
+    execute_process(
+        COMMAND ${VCPKG_EXECUTABLE}
+        install
+        ${ARGV}
+    )
+
+    foreach(package ${ARGV})
+        find_package(${package} CONFIG REQUIRED)
+    endforeach()
 endfunction()
