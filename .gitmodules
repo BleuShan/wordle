@@ -1,6 +1,3 @@
-[submodule "extern/googletest"]
-	path = extern/googletest
-	url = git@github.com:google/googletest.git
-[submodule "extern/simdjson"]
-	path = extern/simdjson
-	url = git@github.com:simdjson/simdjson.git
+[submodule "vcpkg"]
+	path = vcpkg
+	url = git@github.com:microsoft/vcpkg.git

@@ -15,5 +15,4 @@ endif()
 
 include(GNUInstallDirs)
 
-add_subdirectory(extern)
-add_subdirectory(wordle)
+# add_subdirectory(wordle)
