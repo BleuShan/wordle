@@ -14,18 +14,16 @@ function(workspace_helpers_parse_arguments prefix)
     set(list_args
         PROPERTIES
         SOURCES
-        LINK_LIBRARIES
     )
 
     workspace_helpers_parse_arguments_variable_name(
         normalized_prefix ${prefix} "")
     cmake_parse_arguments(
-        PARSE_ARGV
-        1
         ${normalized_prefix}
         "${flags}"
         "${args}"
         "${list_args}"
+        ${ARGN}
     )
 endfunction()
 
@@ -129,16 +127,16 @@ endfunction()
 macro(workspace_helpers_project name)
     workspace_helpers_parse_arguments(${ARGV})
     workspace_helpers_get_parse_arguments_value(
-        workspace_helpers_project_version ${name} VERSION)
+    workspace_helpers_project_version ${name} VERSION)
     set(PROJECT_TARGET ${name})
     set(PROJECT_EXPORT_TARGET ${WORKSPACE_PACKAGE_NAME}::${name})
     if(NOT DEFINED workspace_helpers_project_version)
-        set(version_ ${WORKSPACE_PACKAGE_VERSION})
+        set(workspace_helpers_project_version ${WORKSPACE_PACKAGE_VERSION})
     endif()
 
     project(
         ${name}
-        VERSION ${version_}
+        VERSION ${workspace_helpers_project_version}
         LANGUAGES C CXX
     )
 endmacro()
@@ -273,16 +271,17 @@ endfunction()
 
 macro(library_project name)
     workspace_helpers_project(${name} ${ARGN})
-    library_target(${name})
+    library_target(${ARGV})
 endmacro()
 
 macro(executable_project name)
-    workspace_helpers_project(${name} ${ARGN})
+    workspace_helpers_project(${ARGV})
     unset(PROJECT_EXPORT_TARGET)
-    executable_target(${name})
+    executable_target(${ARGV})
 endmacro()
 
 function(library_target name)
+    workspace_helpers_parse_arguments(${ARGV})
     workspace_helpers_target_type(${name} type)
     if(NOT DEFINED sources)
        workspace_helpers_resolve_target_sources(
@@ -315,17 +314,23 @@ function(library_target name)
     workspace_helpers_set_target_properties(${name})
 
     target_include_directories(${name}
-        SYSTEM
         PUBLIC
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-        $<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/${name}>
         PRIVATE
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>
     )
+
+    workspace_helpers_get_parse_arguments_value(libs ${name} LINK_LIBRARIES)
+
+    workspace_helpers_parse_arguments_variable_name(var ${name} LINK_LIBRARIES)
+    foreach(lib ${libs})
+        target_link_libraries(${name} ${lib})
+    endforeach()
 endfunction()
 
 
 function(executable_target name)
+    workspace_helpers_parse_arguments(${ARGV})
     workspace_helpers_get_parse_arguments_value(sources ${name} SOURCES)
     workspace_helpers_target_type(${name} type)
 

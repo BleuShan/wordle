@@ -39,4 +39,5 @@ TEST(Dictionary, load) {
 
   auto dict = Dictionary::load(*filepath);
   ASSERT_NE(dict, nullptr);
+  ASSERT_FALSE(dict->empty());
 }

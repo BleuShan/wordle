@@ -1,8 +1,7 @@
 library_project(
   wordle
-  LINK_LIBRARIES
-  simdjson::simdjson
 )
+target_link_libraries(${PROJECT_TARGET} simdjson)
 
 add_sources(
   SUBDIRECTORY src
