@@ -10,6 +10,7 @@ add_sources(
   SUBDIRECTORY include/wordle
   PUBLIC
   prelude.h
+  foundation.h
   wordle.h
   dictionary.h
 )
@@ -17,15 +18,15 @@ add_sources(
 add_sources(
   SUBDIRECTORY include/wordle/prelude
   PUBLIC
+  compile_features.h
   exports_symbols.h
-  memory.h
-  string.h
 )
 
 add_sources(
-  SUBDIRECTORY include/wordle/prelude/memory
+  SUBDIRECTORY include/wordle/foundation
   PUBLIC
   ShareableObject.h
+  string.h
 )
 
 add_sources(

@@ -32,7 +32,7 @@ FilePathSharedPtr get_wordle_wordlist_json_filepath(const FilePath& path) {
   return filepath;
 }
 
-TEST(DictionaryTests, load) {
+TEST(Dictionary, load) {
   const auto current_path = filesystem::current_path();
   const auto filepath = get_wordle_wordlist_json_filepath(current_path);
   if (filepath == nullptr) {
