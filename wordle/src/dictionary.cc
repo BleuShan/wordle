@@ -15,8 +15,8 @@ Dictionary::SharedPtr Dictionary::load(const FilePath& path) {
   }
 
   JsonParser parser;
-
-  auto document = parser.load(path);
+  auto path_value = path.string();
+  auto document = parser.load(path_value);
   if (!document.is_object()) {
     return nullptr;
   }
@@ -31,7 +31,7 @@ Dictionary::SharedPtr Dictionary::load(const FilePath& path) {
     return nullptr;
   }
 
-  auto dict = Dictionary::SharedPtr{new Dictionary()};
+  auto dict = SharedPtr{new Dictionary()};
   for (auto&& element : anwsers) {
     auto result = element.get_string();
     if (result.error() == JsonErrorCode::INCORRECT_TYPE) {

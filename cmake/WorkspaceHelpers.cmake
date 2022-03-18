@@ -12,18 +12,19 @@ function(workspace_helpers_parse_arguments prefix)
         VERSION
     )
     set(list_args
-        PROPERTIES
-        SOURCES
+       PROPERTIES
+       SOURCES
     )
 
     workspace_helpers_parse_arguments_variable_name(
         normalized_prefix ${prefix} "")
     cmake_parse_arguments(
+        PARSE_ARGV
+        1
         ${normalized_prefix}
         "${flags}"
         "${args}"
         "${list_args}"
-        ${ARGN}
     )
 endfunction()
 
@@ -102,6 +103,21 @@ function(workspace_helpers_set_target_cxx_properties name)
     )
 endfunction()
 
+function(workspace_helpers_set_target_pdb_properties name)
+  get_target_property(pdb_debug_postfix ${name} DEBUG_POSTFIX)
+  
+  if(${pdb_debug_postfix} STREQUAL "pdb_debug_postfix-NOTFOUND")
+    unset(pdb_debug_postfix)
+  endif()
+
+  set_target_properties(${name}
+    PROPERTIES
+    PDB_NAME "${name}"
+    PDB_NAME_DEBUG "${name}${pdb_debug_postfix}"
+    COMPILE_PDB_NAME "${name}"
+    COMPILE_PDB_NAME_DEBUG "${name}${pdb_debug_postfix}")
+endfunction()
+
 function(workspace_helpers_set_target_output_directory_properties name)
        set_target_properties(
         ${name}
@@ -117,6 +133,7 @@ function(workspace_helpers_set_target_properties name)
     workspace_helpers_set_target_version_properties(${name})
     workspace_helpers_set_target_cxx_properties(${name})
     workspace_helpers_set_target_output_directory_properties(${name})
+    workspace_helpers_set_target_pdb_properties(${name})
 
     workspace_helpers_get_parse_arguments_value(props ${name} PROPERTIES)
     if(DEFINED props)
@@ -309,6 +326,12 @@ function(library_target name)
             CXX_VISIBILITY_PRESET hidden
             VISIBILITY_INLINES_HIDDEN ON
         )
+        string(TOUPPER "${name}_BUILD_SHARED_LIBRARY" build_shared)
+        target_compile_definitions(
+            ${name}
+            PUBLIC
+            ${build_shared}
+        )
     endif()
 
     workspace_helpers_set_target_properties(${name})
@@ -319,13 +342,6 @@ function(library_target name)
         PRIVATE
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>
     )
-
-    workspace_helpers_get_parse_arguments_value(libs ${name} LINK_LIBRARIES)
-
-    workspace_helpers_parse_arguments_variable_name(var ${name} LINK_LIBRARIES)
-    foreach(lib ${libs})
-        target_link_libraries(${name} ${lib})
-    endforeach()
 endfunction()
 
 
@@ -348,10 +364,6 @@ function(executable_target name)
     add_executable(${name} ${type} ${sources})
 
     workspace_helpers_set_target_properties(${name})
-    workspace_helpers_get_parse_arguments_value(libs ${name} LINK_LIBRARIES)
-    foreach(lib ${libs})
-        target_link_libraries(${name} ${lib})
-    endforeach()
 endfunction()
 
 
@@ -390,12 +402,7 @@ function(add_test_suite name)
 
     workspace_helpers_set_target_cxx_properties(${target_name})
     workspace_helpers_set_target_output_directory_properties(${target_name})
-    set_target_properties(
-        ${target_name}
-        PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tests
-        PDB_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tests
-    )
+    workspace_helpers_set_target_pdb_properties(${target_name})
 
     workspace_helpers_get_parse_arguments_value(props ${target_name} PROPERTIES)
     if(DEFINED props)

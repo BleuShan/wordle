@@ -1,7 +1,18 @@
 library_project(
   wordle
 )
-target_link_libraries(${PROJECT_TARGET} simdjson)
+
+target_link_libraries(${PROJECT_TARGET}
+  simdjson::simdjson
+)
+
+add_sources(
+  SUBDIRECTORY include/wordle
+  PUBLIC
+  prelude.h
+  wordle.h
+  dictionary.h
+)
 
 add_sources(
   SUBDIRECTORY src

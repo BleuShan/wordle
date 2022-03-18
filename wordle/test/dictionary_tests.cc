@@ -31,13 +31,13 @@ FilePathSharedPtr get_wordle_wordlist_json_filepath(const FilePath& path) {
   return filepath;
 }
 TEST(Dictionary, load) {
-  auto current_path = filesystem::current_path();
-  auto filepath = get_wordle_wordlist_json_filepath(current_path);
+  const auto current_path = filesystem::current_path();
+  const auto filepath = get_wordle_wordlist_json_filepath(current_path);
   if (filepath == nullptr) {
     FAIL();
   }
 
-  auto dict = Dictionary::load(*filepath);
+  const auto dict = Dictionary::load(*filepath);
   ASSERT_NE(dict, nullptr);
   ASSERT_FALSE(dict->empty());
 }
