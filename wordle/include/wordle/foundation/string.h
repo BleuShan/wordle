@@ -1,9 +1,9 @@
-#ifndef WORDLE_PRELUDE_STRING_H
-#define WORDLE_PRELUDE_STRING_H
+#ifndef WORDLE_FOUNDATION_STRING_H
+#define WORDLE_FOUNDATION_STRING_H
 
 #include <string>
 
-namespace wordle {
+namespace wordle::foundation {
 #if UNICODE
 using String = std::wstring;
 using StringView = std::wstring_view;
@@ -11,6 +11,6 @@ using StringView = std::wstring_view;
 using String = std::string;
 using StringView = std::string_view;
 #endif
-}  // namespace wordle
+}  // namespace wordle::foundation
 
 #endif

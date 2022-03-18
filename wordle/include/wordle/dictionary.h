@@ -6,17 +6,18 @@
 #include <string>
 #include <unordered_set>
 
-#include "prelude.h"
+#include "wordle/foundation.h"
 
 namespace wordle {
 using FilePath = std::filesystem::path;
 
-class WORDLE_PUBLIC_API Dictionary : ShareableObject<Dictionary> {
+class WORDLE_PUBLIC_API Dictionary
+    : public foundation::ShareableObject<Dictionary> {
  public:
   static Handle load(const FilePath& path);
   inline bool empty() const { return data_.size() == 0; }
-  inline bool add(StringView value) {
-    String item = String(value);
+  inline bool add(foundation::StringView value) {
+    auto item = foundation::String(value);
     auto result = data_.insert(item);
     return result.second;
   }
