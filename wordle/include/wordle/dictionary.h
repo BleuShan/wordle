@@ -10,15 +10,10 @@
 
 namespace wordle {
 using FilePath = std::filesystem::path;
-using String = std::string;
-using StringView = std::string_view;
 
-class WORDLE_PUBLIC_API Dictionary : std::enable_shared_from_this<Dictionary> {
+class WORDLE_PUBLIC_API Dictionary : ShareableObject<Dictionary> {
  public:
-  using SharedPtr = std::shared_ptr<Dictionary>;
-  static SharedPtr load(const FilePath& path);
-
-  inline SharedPtr share() { return shared_from_this(); }
+  static Handle load(const FilePath& path);
   inline bool empty() const { return data_.size() == 0; }
   inline bool add(StringView value) {
     String item = String(value);

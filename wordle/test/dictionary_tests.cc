@@ -1,9 +1,10 @@
 
 #include <gtest/gtest.h>
-#include <wordle/dictionary.h>
 
 #include <filesystem>
 #include <memory>
+
+#include "wordle/dictionary.h"
 
 using wordle::Dictionary;
 using wordle::FilePath;
@@ -30,6 +31,7 @@ FilePathSharedPtr get_wordle_wordlist_json_filepath(const FilePath& path) {
 
   return filepath;
 }
+
 TEST(Dictionary, load) {
   const auto current_path = filesystem::current_path();
   const auto filepath = get_wordle_wordlist_json_filepath(current_path);

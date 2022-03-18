@@ -1,5 +1,6 @@
+#include "wordle/dictionary.h"
+
 #include <simdjson.h>
-#include <wordle/dictionary.h>
 
 #include <memory>
 
@@ -9,7 +10,7 @@ using JsonElement = simdjson::dom::element;
 using JsonErrorCode = simdjson::error_code;
 
 namespace wordle {
-Dictionary::SharedPtr Dictionary::load(const FilePath& path) {
+Dictionary::Handle Dictionary::load(const FilePath& path) {
   if (!filesystem::exists(path)) {
     return nullptr;
   }
@@ -30,8 +31,7 @@ Dictionary::SharedPtr Dictionary::load(const FilePath& path) {
   if (!allowed_words.is_array()) {
     return nullptr;
   }
-
-  auto dict = SharedPtr{new Dictionary()};
+  auto dict = Handle{new Dictionary()};
   for (auto&& element : anwsers) {
     auto result = element.get_string();
     if (result.error() == JsonErrorCode::INCORRECT_TYPE) {
