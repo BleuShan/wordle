@@ -322,9 +322,6 @@ function(library_target name)
             ${name}
             PROPERTIES
             DEFINE_SYMBOL ${define_symbol}
-            C_VISIBILITY_PRESET hidden
-            CXX_VISIBILITY_PRESET hidden
-            VISIBILITY_INLINES_HIDDEN ON
         )
         string(TOUPPER "${name}_BUILD_SHARED_LIBRARY" build_shared)
         target_compile_definitions(
@@ -334,6 +331,14 @@ function(library_target name)
         )
     endif()
 
+    set_target_properties(
+        ${name}
+        PROPERTIES
+        C_VISIBILITY_PRESET hidden
+        CXX_VISIBILITY_PRESET hidden
+        VISIBILITY_INLINES_HIDDEN ON
+    )
+
     workspace_helpers_set_target_properties(${name})
 
     target_include_directories(${name}
@@ -341,6 +346,12 @@ function(library_target name)
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
         PRIVATE
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>
+    )
+
+    target_link_libraries(
+        ${name}
+        Folly::folly
+        Folly::folly_deps
     )
 endfunction()
 
@@ -364,6 +375,12 @@ function(executable_target name)
     add_executable(${name} ${type} ${sources})
 
     workspace_helpers_set_target_properties(${name})
+
+    target_link_libraries(
+        ${target_name}
+        Folly::folly
+        Folly::folly_deps
+    )
 endfunction()
 
 
@@ -409,7 +426,16 @@ function(add_test_suite name)
         set_target_properties(${target_name} PROPERTIES ${props})
     endif()
 
-    target_link_libraries(${target_name} GTest::gmock_main)
+    target_link_libraries(
+        ${target_name}
+        GTest::gmock_main
+    )
+
+    target_link_libraries(
+        ${target_name}
+        Folly::folly
+        Folly::folly_deps
+    )
 
     if(DEFINED PROJECT_EXPORT_TARGET)
         target_link_libraries(${target_name} ${PROJECT_EXPORT_TARGET})
@@ -486,14 +512,28 @@ function(add_sources)
 endfunction()
 
 function(add_packages)
-    message("${VCPKG_EXECUTABLE} install ${name}")
     execute_process(
         COMMAND ${VCPKG_EXECUTABLE}
         install
+        "--recurse"
         ${ARGV}
     )
 
     foreach(package ${ARGV})
         find_package(${package} CONFIG REQUIRED)
     endforeach()
+endfunction()
+
+macro(add_git_package name url)
+    FetchContent_Declare(
+        ${name}
+        GIT_REPOSITORY ${url}
+        ${ARGN}
+    )
+
+    list(APPEND workspace_git_packages ${name})
+endmacro()
+
+function(use_git_packages)
+    FetchContent_MakeAvailable(${workspace_git_packages})
 endfunction()

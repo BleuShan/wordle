@@ -1,8 +1,9 @@
 #ifndef WORDLE_FOUNDATION_H
 #define WORDLE_FOUNDATION_H
 
-#include "wordle/foundation/ShareableObject.h"
-#include "wordle/foundation/string.h"
-#include "wordle/prelude.h"
+#include <wordle/foundation/filesystem.h>
+#include <wordle/foundation/json.h>
+#include <wordle/foundation/mixins.h>
+#include <wordle/foundation/string.h>
 
 #endif

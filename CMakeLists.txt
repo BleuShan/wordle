@@ -14,7 +14,10 @@ if(BUILD_TESTING)
   include(GoogleTest)
 endif()
 
-add_packages(simdjson)
+add_packages(
+  simdjson
+  folly
+)
 
 include(GNUInstallDirs)
 

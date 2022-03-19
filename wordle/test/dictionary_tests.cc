@@ -1,10 +1,9 @@
 
 #include <gtest/gtest.h>
+#include <wordle/dictionary.h>
 
 #include <filesystem>
 #include <memory>
-
-#include "wordle/dictionary.h"
 
 using wordle::Dictionary;
 using wordle::FilePath;

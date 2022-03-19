@@ -12,7 +12,7 @@
   #ifndef WORDLE_PRIVATE_API
     #define WORDLE_PRIVATE_API
   #endif
-#elif __GNUC__ >= 4 && WORDLE_BUILD_SHARED_LIBRARY
+#elif __GNUC__ >= 4
   #ifndef WORDLE_PUBLIC_API
     #define WORDLE_PUBLIC_API __attribute__((visibility("default")))
   #endif
