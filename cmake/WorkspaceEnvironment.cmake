@@ -4,6 +4,7 @@ include_guard()
 # Global environment setup
 include(CMakeDependentOption)
 include(FetchContent)
+include(WorkspaceHelpers)
 
 # Globals
 set(WORKSPACE_PACKAGE_NAME Wordle)
@@ -27,12 +28,6 @@ if(VCPKG_ROOT STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}/vcpkg")
 endif()
 
 
-
-set(CMAKE_TOOLCHAIN_FILE
-  ${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake
-  CACHE STRING "Vcpkg toolchain file")
-
-
 set(VCPKG_EXECUTABLE
   ${VCPKG_ROOT}/vcpkg
   CACHE STRING "Vcpkg executable")
@@ -53,10 +48,16 @@ if(CMAKE_HOST_WIN32)
   )
 endif()
 
-
 if(DEFINED ENV{VCPKG_DEFAULT_TRIPLET} AND NOT DEFINED VCPKG_TARGET_TRIPLET)
   set(VCPKG_TARGET_TRIPLET $ENV{VCPKG_DEFAULT_TRIPLET} CACHE STRING "")
 endif()
+
+set(CMAKE_TOOLCHAIN_FILE
+  ${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake
+  CACHE STRING "Vcpkg toolchain file")
+
+
+workspace_normalize_vcpkg_target_triplet()
 
 mark_as_advanced(FORCE
   CMAKE_TOOLCHAIN_FILE

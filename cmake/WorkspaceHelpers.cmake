@@ -1,7 +1,5 @@
 include_guard()
 
-include(WorkspaceEnvironment)
-
 function(workspace_helpers_parse_arguments prefix)
     set(flags
         SHARED
@@ -209,7 +207,7 @@ function(workspace_helpers_resolve_target_sources name)
     string(REGEX REPLACE ${WORKSPACE_TEST_SUFFIX_REGEX} "" name ${name})
     list(APPEND allowed_filenames ${name})
     if(BUILD_TESTING)
-        list(APPEND test_suffixes
+        string(JOIN ";" test_suffixes
             "-tests"
             "_tests"
             "-test"
@@ -219,31 +217,10 @@ function(workspace_helpers_resolve_target_sources name)
         )
 
         foreach(suffix ${test_suffixes})
-            list(APPEND allowed_filenames ${name}${suffix})
+            string(CONCAT allowed_filename ${name} ${suffix})
+            list(APPEND allowed_filenames ${allowed_filename})
         endforeach()
     endif()
-
-    workspace_helpers_get_parse_arguments_value(
-        disallowed_filenames
-        ${prefix}
-        DISALLOWED_FILENAMES)
-
-    foreach(filename ${disallowed_filenames})
-        list(FIND allowed_filenames ${filename} index)
-        while(index GREATER_EQUAL 0)
-            list(FIND allowed_filenames ${filename} index)
-            list(REMOVE_AT allowed_filenames ${index})
-        endwhile()
-    endforeach()
-
-    workspace_helpers_get_parse_arguments_value(
-        disallowed_filename_patterns
-        ${prefix}
-        DISALLOWED_FILENAME_PATTERNS)
-
-    foreach(pattern ${disallowed_filename_patterns})
-        list(FILTER allowed_filenames EXCLUDE REGEX ${pattern})
-    endforeach()
 
     workspace_helpers_get_parse_arguments_value(
         allowed_subdirectories
@@ -259,27 +236,45 @@ function(workspace_helpers_resolve_target_sources name)
         list(APPEND allowed_directories ${directory})
     endforeach()
 
-    foreach(filename ${allowed_filenames})
-        foreach(extension ${CMAKE_CXX_SOURCE_FILE_EXTENSIONS})
-            foreach(directory ${allowed_directories})
-                cmake_path(
-                    APPEND directory
-                    ${filename}
-                    OUTPUT_VARIABLE filepath)
-                cmake_path(
-                    REPLACE_EXTENSION filepath ${extension}
-                    OUTPUT_VARIABLE filepath)
+    foreach(allowed_filename ${allowed_filenames})
+        foreach(directory ${allowed_directories})
+            cmake_path(
+                APPEND directory
+                ${allowed_filename}
+                OUTPUT_VARIABLE filename)
 
-                if (EXISTS ${filepath})
-                    cmake_path(
-                        RELATIVE_PATH filepath
-                        BASE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-                        OUTPUT_VARIABLE filepath)
-                    list(APPEND filenames ${filepath})
+            foreach(file_extension ${CMAKE_CXX_SOURCE_FILE_EXTENSIONS})
+                cmake_path(
+                    REPLACE_EXTENSION filename ${file_extension}
+                    OUTPUT_VARIABLE filename)
+
+                if(EXISTS ${filename})
+                    list(APPEND filenames ${filename})
                     break()
                 endif()
             endforeach()
         endforeach()
+    endforeach()
+
+    workspace_helpers_get_parse_arguments_value(
+        disallowed_filename_patterns
+        ${prefix}
+        DISALLOWED_FILENAME_PATTERNS)
+
+    workspace_helpers_get_parse_arguments_value(
+        disallowed_filenames
+        ${prefix}
+        DISALLOWED_FILENAMES)
+
+    foreach(filename ${disallowed_filenames})
+        string(JOIN "|" extension_pattern ${CMAKE_CXX_SOURCE_FILE_EXTENSIONS})
+        string(REGEX REPLACE "[+]" "[+]" extension_pattern "${extension_pattern}")
+        set(file_pattern "${filename}[.](${extension_pattern})$")
+        list(APPEND disallowed_filename_patterns "${file_pattern}")
+    endforeach()
+
+    foreach(pattern ${disallowed_filename_patterns})
+        list(FILTER filenames EXCLUDE REGEX ${pattern})
     endforeach()
 
     set(${output_variable} ${filenames} PARENT_SCOPE)
@@ -330,14 +325,6 @@ function(library_target name)
             ${build_shared}
         )
     endif()
-
-    set_target_properties(
-        ${name}
-        PROPERTIES
-        C_VISIBILITY_PRESET hidden
-        CXX_VISIBILITY_PRESET hidden
-        VISIBILITY_INLINES_HIDDEN ON
-    )
 
     workspace_helpers_set_target_properties(${name})
 
@@ -392,7 +379,7 @@ function(add_test_suite name)
     string(REGEX MATCH ${WORKSPACE_TEST_SUFFIX_REGEX} test_suffix ${name})
     set(target_name ${name})
     if(NOT test_suffix)
-        set(target_name ${name}_tests)
+        set(target_name ${name}Tests)
     endif()
 
     workspace_helpers_parse_arguments(${target_name} ${ARGN})
@@ -407,7 +394,6 @@ function(add_test_suite name)
        workspace_helpers_resolve_target_sources(
            ${name}
            ALLOWED_SUBDIRECTORIES
-                src
                 test
                 tests
            DISALLOWED_FILENAMES
@@ -516,6 +502,8 @@ function(add_packages)
         COMMAND ${VCPKG_EXECUTABLE}
         install
         "--recurse"
+        "--triplet=${VCPKG_TARGET_TRIPLET}"
+        "--clean-after-build"
         ${ARGV}
     )
 
@@ -536,4 +524,29 @@ endmacro()
 
 function(use_git_packages)
     FetchContent_MakeAvailable(${workspace_git_packages})
+endfunction()
+
+function(workspace_normalize_vcpkg_target_triplet)
+    if(NOT DEFINED VCPKG_TARGET_TRIPLET)
+        return()
+    endif()
+    if(BUILD_SHARED_LIBS)
+       set(linkage dynamic)
+    else()
+        set(linkage static)
+    endif()
+    string(
+        REGEX
+        REPLACE
+        "^([A-Za-z0-9]+-[A-Za-z0-9]+)(-static|dynamic)?$"
+        "\\1-${linkage}"
+        target_triplet
+        ${VCPKG_TARGET_TRIPLET}
+    )
+
+    set(VCPKG_TARGET_TRIPLET
+        "${target_triplet}"
+        CACHE
+        INTERNAL
+        "Vcpkg target triplet (ex x64-windows)")
 endfunction()

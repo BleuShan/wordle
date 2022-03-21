@@ -1,8 +1,8 @@
 #ifndef WORDLE_H
 #define WORDLE_H
 
-#include <wordle/dictionary.h>
-#include <wordle/foundation.h>
-#include <wordle/prelude.h>
+#include <wordle/entities/entities.h>
+#include <wordle/foundation/foundation.h>
+#include <wordle/prelude/prelude.h>
 
 #endif

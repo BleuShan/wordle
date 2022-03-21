@@ -1,0 +1,6 @@
+add_sources(
+  PRIVATE
+  FileManager.cc
+)
+
+add_test_suite(FileManager)
