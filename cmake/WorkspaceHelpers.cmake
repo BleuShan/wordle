@@ -530,6 +530,13 @@ function(workspace_normalize_vcpkg_target_triplet)
     if(NOT DEFINED VCPKG_TARGET_TRIPLET)
         return()
     endif()
+    string(REGEX MATCH  "^([A-Za-z0-9]+-windows)(-static|dynamic)?$"
+        is_windows_triplet
+        ${VCPKG_TARGET_TRIPLET})
+    if(is_windows_triplet)
+        return()
+    endif()
+
     if(BUILD_SHARED_LIBS)
        set(linkage dynamic)
     else()
