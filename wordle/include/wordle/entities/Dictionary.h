@@ -14,8 +14,8 @@ using FilePath = std::filesystem::path;
 
 class WORDLE_PUBLIC_API Dictionary final {
  public:
-  inline bool empty() const noexcept { return data_.size() == 0; }
-  inline bool add(foundation::StringView value) {
+  auto empty() const noexcept { return data_.size() == 0; }
+  auto add(foundation::StringView value) {
     foundation::String item;
 
     auto result = data_.insert(item);

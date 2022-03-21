@@ -6,9 +6,11 @@
 #include <concepts>
 
 namespace wordle::foundation::concepts {
-template <class T>
-concept Singleton = Shareable<T> && requires {
-  { T::instance() } -> std::same_as<typename T::SharedPtr>;
+template <class MaybeSingleton>
+concept Singleton = Shareable<MaybeSingleton> && requires {
+  {
+    MaybeSingleton::instance()
+    } -> std::same_as<typename MaybeSingleton::SharedPtr>;
 };
 }  // namespace wordle::foundation::concepts
 

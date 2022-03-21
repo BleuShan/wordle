@@ -3,10 +3,10 @@
 
 namespace wordle::foundation::filesystem::tests {
 
-TEST(FileManager, instance) {
-  auto manager = FileManager::instance();
-  ASSERT_NE(manager, nullptr);
-  ASSERT_EQ(manager, FileManager::instance());
+TEST(FileProvider, instance) {
+  auto provider = FileProvider::instance();
+  ASSERT_NE(provider, nullptr);
+  ASSERT_EQ(provider, FileProvider::instance());
 }
 
 }  // namespace wordle::foundation::filesystem::tests

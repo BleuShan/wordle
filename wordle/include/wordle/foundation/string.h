@@ -4,6 +4,7 @@
 #include <folly/FBString.h>
 #include <folly/FixedString.h>
 #include <folly/String.h>
+using namespace std::literals;
 
 namespace wordle::foundation {
 template <std::size_t N>

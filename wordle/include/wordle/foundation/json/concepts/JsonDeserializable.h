@@ -1,17 +1,16 @@
-#ifndef WORDLE_FOUNDATION_JSON_CONCEPTS_JSON_DESERIALIZABLE_H
-#define WORDLE_FOUNDATION_JSON_CONCEPTS_JSON_DESERIALIZABLE_H
+#ifndef WORDLE_FOUNDATION_JSON_CONCEPTS_JSONDESERIALIZABLE_H
+#define WORDLE_FOUNDATION_JSON_CONCEPTS_JSONDESERIALIZABLE_H
 
 #include <wordle/foundation/concepts/concepts.h>
+#include <wordle/foundation/json/concepts/JsonDeserializer.h>
+#include <wordle/foundation/json/types.h>
 
-namespace wordle::foundation::json::concepts {
+namespace wordle::foundation::concepts {
 template <class MaybeJsonDeserializable>
-concept JsonDeserializable =
-    foundation::concepts::Shareable<MaybeJsonDeserializable> &&
-    requires(foundation::StringView path) {
-  {
-    MaybeJsonDeserializable::fromJSON(path)
-    } -> std::same_as<typename MaybeJsonDeserializable::SharedPtr>;
-};
-}  // namespace wordle::foundation::json::concepts
+concept JsonDeserializable = Shareable<MaybeJsonDeserializable> &&
+    JsonDeserializer<typename MaybeJsonDeserializable::JsonDeserializer> &&
+    SameAs<typename MaybeJsonDeserializable::JsonDeserializer::Output,
+           MaybeJsonDeserializable>;
+}  // namespace wordle::foundation::concepts
 
 #endif

@@ -1,18 +1,19 @@
 #ifndef WORDLE_FOUNDATION_CONCEPTS_SHAREABLE_H
 #define WORDLE_FOUNDATION_CONCEPTS_SHAREABLE_H
 
-#include <concepts>
+#include <wordle/foundation/concepts/reflection.h>
+
 #include <memory>
 
 namespace wordle::foundation::concepts {
-template <class T>
-concept Shareable = requires(T* instance) {
-  typename T::SharedPtr;
-  typename T::WeakPtr;
-  std::same_as<typename T::SharedPtr, std::shared_ptr<T>>;
-  std::same_as<typename T::WeakPtr, std::weak_ptr<T>>;
-  { instance->shared_from_this() } -> std::same_as<typename T::SharedPtr>;
-  { instance->weak_from_this() } -> std::same_as<typename T::WeakPtr>;
+template <class MaybeShareable>
+concept Shareable = requires(MaybeShareable instance) {
+  typename MaybeShareable::SharedPtr;
+  typename MaybeShareable::WeakPtr;
+  SameAs<typename MaybeShareable::SharedPtr, std::shared_ptr<MaybeShareable>>;
+  SameAs<typename MaybeShareable::WeakPtr, std::weak_ptr<MaybeShareable>>;
+  { instance.shared_from_this() } -> SameAs<typename MaybeShareable::SharedPtr>;
+  { instance.weak_from_this() } -> SameAs<typename MaybeShareable::WeakPtr>;
 };
 
 }  // namespace wordle::foundation::concepts

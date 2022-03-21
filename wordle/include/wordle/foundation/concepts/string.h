@@ -14,6 +14,10 @@ concept StringConvertible =
 template <class MaybeStdStringConvertible>
 concept StdStringConvertible =
     ConvertibleTo<foundation::StdString, MaybeStdStringConvertible>;
+
+template <class MaybeStringViewConvertible>
+concept StringViewConvertible =
+    ConvertibleTo<foundation::StringView, MaybeStringViewConvertible>;
 }  // namespace wordle::foundation::concepts
 
 #endif

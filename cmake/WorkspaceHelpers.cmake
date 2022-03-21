@@ -386,21 +386,19 @@ function(add_test_suite name)
 
     workspace_helpers_target_type(${target_name} type)
     workspace_helpers_get_parse_arguments_value(sources ${target_name} SOURCES)
-    if(NOT DEFINED sources)
-        if(DEFINED PROJECT_EXPORT_TARGET)
-            list(APPEND disallowed_filenames ${name})
-        endif()
-
-       workspace_helpers_resolve_target_sources(
-           ${name}
-           ALLOWED_SUBDIRECTORIES
-                test
-                tests
-           DISALLOWED_FILENAMES
-                ${disallowed_filenames}
-           OUTPUT_VARIABLE sources
-       )
+    if(DEFINED PROJECT_EXPORT_TARGET)
+        list(APPEND disallowed_filenames ${name})
     endif()
+
+    workspace_helpers_resolve_target_sources(
+        ${name}
+        ALLOWED_SUBDIRECTORIES
+            test
+            tests
+        DISALLOWED_FILENAMES
+            ${disallowed_filenames}
+        OUTPUT_VARIABLE sources
+    )
     add_executable(${target_name} ${type} ${sources})
 
     workspace_helpers_set_target_cxx_properties(${target_name})

@@ -1,6 +1,5 @@
-add_sources(
-  PRIVATE
-  JsonSerializer.cc
+add_test_suite(
+  Json
+  SOURCES
+  fixtures/DeserializableObject.h
 )
-
-add_test_suite(JsonSerializer)

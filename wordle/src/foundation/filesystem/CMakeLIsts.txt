@@ -1,6 +1,6 @@
 add_sources(
   PRIVATE
-  FileManager.cc
+  FileProvider.cc
 )
 
-add_test_suite(FileManager)
+add_test_suite(FileProvider)

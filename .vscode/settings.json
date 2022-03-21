@@ -47,6 +47,8 @@
     "xtree": "cpp",
     "xutility": "cpp",
     "__config": "cpp",
-    "concepts": "cpp"
+    "concepts": "cpp",
+    "string_view": "cpp",
+    "cstdint": "cpp"
   }
 }
