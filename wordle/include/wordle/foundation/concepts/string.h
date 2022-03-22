@@ -7,17 +7,17 @@
 #include <concepts>
 
 namespace wordle::foundation::concepts {
-template <class MaybeStringConvertible>
+template <class Type>
 concept StringConvertible =
-    ConvertibleTo<foundation::String, MaybeStringConvertible>;
+    ConvertibleTo<foundation::String, Type>;
 
-template <class MaybeStdStringConvertible>
+template <class Type>
 concept StdStringConvertible =
-    ConvertibleTo<foundation::StdString, MaybeStdStringConvertible>;
+    ConvertibleTo<foundation::StdString, Type>;
 
-template <class MaybeStringViewConvertible>
+template <class Type>
 concept StringViewConvertible =
-    ConvertibleTo<foundation::StringView, MaybeStringViewConvertible>;
+    ConvertibleTo<foundation::StringView, Type>;
 }  // namespace wordle::foundation::concepts
 
 #endif

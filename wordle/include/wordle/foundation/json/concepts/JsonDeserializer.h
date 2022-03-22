@@ -5,15 +5,10 @@
 #include <wordle/foundation/json/types.h>
 
 namespace wordle::foundation::concepts {
-template <class MaybeJsonDeserializer>
-concept JsonDeserializer =
-    ConstructibleFrom<MaybeJsonDeserializer, json::JsonPaddedStringView> &&
-    Shareable<typename MaybeJsonDeserializer::Output> &&
-    requires(MaybeJsonDeserializer instance) {
-  {
-    instance()
-    } -> SameAs<
-        json::JsonResult<typename MaybeJsonDeserializer::Output::SharedPtr>>;
+template <class Output, class Type>
+concept JsonDeserializer = requires(Type instance,
+                                    json::JsonPaddedStringView rawJson) {
+  { instance.deserialize(rawJson) } -> SameAs<Output>;
 };
 }  // namespace wordle::foundation::concepts
 

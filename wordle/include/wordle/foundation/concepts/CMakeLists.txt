@@ -1,5 +1,6 @@
 add_sources(
   PUBLIC
+  assignable.h
   concepts.h
   constructible.h
   convertible.h

@@ -4,7 +4,7 @@
       "name": "x64-Debug",
       "generator": "Ninja",
       "configurationType": "Debug",
-      "inheritEnvironments": ["msvc_x64_x64"],
+      "inheritEnvironments": [ "msvc_x64_x64" ],
       "buildRoot": "${projectDir}/build",
       "installRoot": "${projectDir}/dist",
       "cmakeCommandArgs": "",
@@ -21,7 +21,8 @@
           "value": "FALSE",
           "type": "BOOL"
         }
-      ]
+      ],
+      "cmakeToolchain": "${projectDir}/vcpkg/scripts/buildsystems/vcpkg.cmake"
     }
   ]
 }

@@ -1,6 +1,6 @@
 include_guard()
 
-function(workspace_helpers_parse_arguments prefix)
+macro(workspace_helpers_parse_arguments prefix)
     set(flags
         SHARED
         WIN32
@@ -12,19 +12,19 @@ function(workspace_helpers_parse_arguments prefix)
     set(list_args
        PROPERTIES
        SOURCES
+       LINK_LIBRARIES
     )
 
     workspace_helpers_parse_arguments_variable_name(
         normalized_prefix ${prefix} "")
     cmake_parse_arguments(
-        PARSE_ARGV
-        1
         ${normalized_prefix}
         "${flags}"
         "${args}"
         "${list_args}"
+        ${ARGN}
     )
-endfunction()
+endmacro()
 
 function(workspace_helpers_parse_arguments_variable_name var prefix suffix)
     string(JOIN "_" value ${prefix} ${suffix})
@@ -277,9 +277,26 @@ function(workspace_helpers_resolve_target_sources name)
         list(FILTER filenames EXCLUDE REGEX ${pattern})
     endforeach()
 
+    if(DEFINED ${output_variable})
+        list(APPEND filenames ${${output_variable}})
+    endif()
+
     set(${output_variable} ${filenames} PARENT_SCOPE)
 endfunction()
 
+function(workspace_helpers_set_target_link_librairies name)
+    set(list_types INTERFACE PUBLIC PRIVATE)
+    set(list_type PRIVATE)
+    workspace_helpers_get_parse_arguments_value(items ${name} LINK_LIBRARIES)
+    foreach(item ${items})
+      list(FIND list_types ${item} index)
+      if(index GREATER -1 AND NOT item STREQUAL ${list_type})
+        set(list_type ${item})
+        continue()
+      endif()
+      target_link_libraries(${name} ${list_type} ${item})
+    endforeach()
+endfunction()
 
 macro(library_project name)
     workspace_helpers_project(${name} ${ARGN})
@@ -295,19 +312,17 @@ endmacro()
 function(library_target name)
     workspace_helpers_parse_arguments(${ARGV})
     workspace_helpers_target_type(${name} type)
-    if(NOT DEFINED sources)
-       workspace_helpers_resolve_target_sources(
-            ${name}
-            ALLOWED_SUBDIRECTORIES
-                src
-            ALLOWED_FILENAMES
-                DllMain
-            DISALLOWED_FILENAME_PATTERNS
-                "${name}${WORKSPACE_TEST_SUFFIX_REGEX}"
-            OUTPUT_VARIABLE sources
-       )
-    endif()
     workspace_helpers_get_parse_arguments_value(sources ${name} SOURCES)
+    workspace_helpers_resolve_target_sources(
+        ${name}
+        ALLOWED_SUBDIRECTORIES
+            src
+        ALLOWED_FILENAMES
+            DllMain
+        DISALLOWED_FILENAME_PATTERNS
+            "${name}${WORKSPACE_TEST_SUFFIX_REGEX}"
+        OUTPUT_VARIABLE sources
+    )
     add_library(${name} ${type} ${sources})
     add_library(${WORKSPACE_PACKAGE_NAME}::${name} ALIAS ${name})
 
@@ -335,11 +350,8 @@ function(library_target name)
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>
     )
 
-    target_link_libraries(
-        ${name}
-        Folly::folly
-        Folly::folly_deps
-    )
+   
+    workspace_helpers_set_target_link_librairies(${name})
 endfunction()
 
 
@@ -348,26 +360,19 @@ function(executable_target name)
     workspace_helpers_get_parse_arguments_value(sources ${name} SOURCES)
     workspace_helpers_target_type(${name} type)
 
-    if(NOT DEFINED sources)
-       workspace_helpers_resolve_target_sources(
-           ${name}
-           ALLOWED_SUBDIRECTORIES
-                src
-           ALLOWED_FILENAMES
-                main
-           OUTPUT_VARIABLE sources
-       )
-    endif()
+    workspace_helpers_resolve_target_sources(
+        ${name}
+        ALLOWED_SUBDIRECTORIES
+            src
+        ALLOWED_FILENAMES
+            main
+        OUTPUT_VARIABLE sources
+    )
 
     add_executable(${name} ${type} ${sources})
 
     workspace_helpers_set_target_properties(${name})
-
-    target_link_libraries(
-        ${target_name}
-        Folly::folly
-        Folly::folly_deps
-    )
+    workspace_helpers_set_target_link_librairies(${name})
 endfunction()
 
 
@@ -399,6 +404,7 @@ function(add_test_suite name)
             ${disallowed_filenames}
         OUTPUT_VARIABLE sources
     )
+
     add_executable(${target_name} ${type} ${sources})
 
     workspace_helpers_set_target_cxx_properties(${target_name})
@@ -410,19 +416,16 @@ function(add_test_suite name)
         set_target_properties(${target_name} PROPERTIES ${props})
     endif()
 
+    workspace_helpers_set_target_link_librairies(${target_name})
+
     target_link_libraries(
         ${target_name}
+        PRIVATE
         GTest::gmock_main
     )
 
-    target_link_libraries(
-        ${target_name}
-        Folly::folly
-        Folly::folly_deps
-    )
-
     if(DEFINED PROJECT_EXPORT_TARGET)
-        target_link_libraries(${target_name} ${PROJECT_EXPORT_TARGET})
+        target_link_libraries(${target_name} PRIVATE ${PROJECT_EXPORT_TARGET})
     endif()
 
     gtest_discover_tests(${target_name})

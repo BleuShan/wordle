@@ -13,6 +13,12 @@ concept CopyConstructible = std::copy_constructible<Type>;
 template <class Type>
 concept MoveConstructible = std::move_constructible<Type>;
 
+template <class Type>
+concept DefaultInitializable = std::default_initializable<Type>;
+
+template<class Type>
+concept Destructible = std::destructible<Type>;
+
 }  // namespace wordle::foundation::concepts
 
 #endif

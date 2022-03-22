@@ -3,6 +3,7 @@
 
 #include <wordle/foundation/concepts/Shareable.h>
 #include <wordle/foundation/concepts/Singleton.h>
+#include <wordle/foundation/concepts/assignable.h>
 #include <wordle/foundation/concepts/constructible.h>
 #include <wordle/foundation/concepts/convertible.h>
 #include <wordle/foundation/concepts/reflection.h>

@@ -6,6 +6,7 @@
 namespace wordle::foundation::json {
 using JsonArray = simdjson::ondemand::array;
 using JsonDocument = simdjson::ondemand::document;
+using JsonError = simdjson::simdjson_error;
 using JsonErrorCode = simdjson::error_code;
 using JsonField = simdjson::ondemand::field;
 using JsonNumber = simdjson::ondemand::number;
@@ -19,8 +20,6 @@ using JsonResult = simdjson::simdjson_result<Value>;
 using JsonStream = simdjson::ondemand::document_stream;
 using JsonType = simdjson::ondemand::json_type;
 using JsonValue = simdjson::ondemand::value;
-
-using ParsedJsonValueResult = JsonResult<JsonValue>;
 }  // namespace wordle::foundation::json
 
 #endif

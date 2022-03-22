@@ -2,5 +2,3 @@ add_sources(
   PRIVATE
   FileProvider.cc
 )
-
-add_test_suite(FileProvider)
