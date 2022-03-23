@@ -5,6 +5,8 @@ using wordle::foundation::filesystem::FileProvider;
 
 const folly::Singleton<FileProvider> kFileManager;
 
+namespace wordle::foundation::filesystem {
 auto FileProvider::instance() -> FileProvider::SharedPtr {
   return kFileManager.try_get();
+}
 }

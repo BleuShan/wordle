@@ -34,12 +34,20 @@ endfunction()
 
 function(workspace_helpers_get_parse_arguments_value var prefix suffix)
     workspace_helpers_parse_arguments_variable_name(source ${prefix} ${suffix})
-    set(${var} ${${source}} ${ARGN} PARENT_SCOPE)
+    list(FIND ARGN CACHE index)
+    if(index EQUAL -1)
+      list(APPEND ARGN PARENT_SCOPE)
+    endif()
+    set(${var} ${${source}} ${ARGN})
 endfunction()
 
-function(workspace_helpers_set_parse_arguments_value value prefix suffix)
+function(workspace_helpers_set_parse_arguments_value prefix suffix)
     workspace_helpers_parse_arguments_variable_name(var ${prefix} ${suffix})
-    set(${var} ${value} ${ARGN} PARENT_SCOPE)
+    list(FIND ARGN CACHE index)
+    if(index EQUAL -1)
+      list(APPEND ARGN PARENT_SCOPE)
+    endif()
+    set(${var} ${ARGN})
 endfunction()
 
 function(workspace_helpers_set_target_version_properties name)
@@ -95,7 +103,7 @@ function(workspace_helpers_set_target_cxx_properties name)
         C_STANDARD 23
         C_STANDARD_REQUIRED ON
         C_EXTENSIONS OFF
-        CXX_STANDARD 20
+        CXX_STANDARD 23
         CXX_STANDARD_REQUIRED ON
         CXX_EXTENSIONS OFF
     )
@@ -498,40 +506,118 @@ function(add_sources)
     target_sources(${target} ${sources})
 endfunction()
 
-function(add_packages)
-    execute_process(
-        COMMAND ${VCPKG_EXECUTABLE}
-        install
-        "--recurse"
-        "--triplet=${VCPKG_TARGET_TRIPLET}"
-        "--clean-after-build"
-        ${ARGV}
-    )
+function(declare_vpckg_packages)
+  list(APPEND declared_vcpkg_packages $CACHE{VCPKG_DECLARED_PACKAGES} ${ARGV})
+  list(REMOVE_DUPLICATES declared_packages)
+  set(VCPKG_DECLARED_PACKAGES ${declared_vcpkg_packages} CACHE INTERNAL "List of declared packages" FORCE)
+endfunction()
 
-    foreach(package ${ARGV})
-        find_package(${package} CONFIG REQUIRED)
+function(set_vcpkg_package_features package_name)
+  if(package_name STREQUAL "" OR ARGC LESS 2)
+    if(package_name STREQUAL "")
+      set(package_name "<package_name>")
+    endif()
+    message(FATAL "Invalid arguments expected set_vcpkg_package_feature(${package_name} <features>...)")
+  endif()
+  list(FIND VCPKG_DECLARED_PACKAGES ${package_name} index)
+  if(index EQUAL -1)
+    message(FATAL "vcpkg package \"${package_name}\" is not declared.")
+  endif()
+  workspace_helpers_parse_arguments_variable_name(varname "VCPKG_${package_name}" features)
+  unset(${varname} CACHE)
+  if(ARGV1 STREQUAL "DEFAULT")
+    return()
+  endif()
+  list(REMOVE_DUPLICATES ARGN)
+  list(TRANSFORM ARGN STRIP)
+  set(${varname} ${ARGN} CACHE STRING "Separated list of ${package_name} features" FORCE)
+endfunction()
+
+function(install_declared_vpckg_packages)
+    list_vckpg_installed_packages(installed_packages)
+    foreach(package_name ${VCPKG_DECLARED_PACKAGES})
+      string(JOIN ":" key ${package_name} ${VCPKG_TARGET_TRIPLET})
+      string(JSON package_def ERROR_VARIABLE error GET ${installed_packages} ${key})
+      
+      workspace_helpers_parse_arguments_variable_name(varname "VCPKG_${package_name}" features)
+      
+      set(default_install OFF)
+      if(error STREQUAL NOTFOUND)
+        string(JSON features ERROR_VARIABLE error GET ${package_def} features)
+        if(error STREQUAL "NOTFOUND")
+          string(REGEX REPLACE "^\\[(.+)\\]$" "\\1" features ${features})
+          string(REGEX REPLACE "[\" ]" "" features ${features})
+          string(REPLACE "," ";" features "${features}")
+          string(REPLACE "[]" "" features "${features}")
+        else()
+          unset(features)
+        endif()
+
+        if(NOT DEFINED features)
+          unset(${varname} CACHE)
+        elseif(NOT DEFINED ${varname})
+          set(${varname} ${features} CACHE STRING "Separated list of ${package_name} features")
+        endif()
+      elseif()
+        set(default_install ON)
+      endif()
+      
+      set(declared_features ${${varname}})
+     
+      foreach(feature ${declared_features})
+        set(default_install OFF)
+        list(FIND features ${feature} index)
+        if(index EQUAL -1)
+          list(APPEND install_list "${package_name}[${feature}]")
+        endif()
+      endforeach()
+
+      if(default_install)
+        list(APPEND install_list "${package_name}")
+      endif()
+    endforeach()
+
+    message("${install_list}")
+    
+    if(NOT DEFINED install_list)
+      execute_process(
+         COMMAND ${VCPKG_EXECUTABLE}
+         upgrade
+         ${ARGV}
+      )
+    else()
+      list(APPEND ARGV "--recurse" "--clean-after-build" ${VCPKG_COMMAND_ARGS})
+      list(REMOVE_DUPLICATES ARGV)
+      execute_process(
+          COMMAND ${VCPKG_EXECUTABLE}
+          install
+         ${ARGV}
+         ${install_list}
+      )
+    endif()
+    
+    foreach(package_name ${VCPKG_DECLARED_PACKAGES})
+      find_package(${package_name} CONFIG REQUIRED)
     endforeach()
 endfunction()
 
-macro(add_git_package name url)
-    FetchContent_Declare(
-        ${name}
-        GIT_REPOSITORY ${url}
+function(list_vckpg_installed_packages outvar)
+    list(APPEND ARGN "--x-json" ${VCPKG_COMMAND_ARGS})
+    list(REMOVE_DUPLICATES ARGN)
+    execute_process(
+        COMMAND ${VCPKG_EXECUTABLE}
+        list
         ${ARGN}
+        OUTPUT_VARIABLE result
     )
-
-    list(APPEND workspace_git_packages ${name})
-endmacro()
-
-function(use_git_packages)
-    FetchContent_MakeAvailable(${workspace_git_packages})
+    set(${outvar} ${result} PARENT_SCOPE)
 endfunction()
 
 function(workspace_normalize_vcpkg_target_triplet)
     if(NOT DEFINED VCPKG_TARGET_TRIPLET)
         return()
     endif()
-    string(REGEX MATCH  "^([A-Za-z0-9]+-windows)(-static|dynamic)?$"
+    string(REGEX MATCH  "^([A-Za-z0-9]+-windows)(-[A-Za-z0-9]+-?)?$"
         is_windows_triplet
         ${VCPKG_TARGET_TRIPLET})
     if(is_windows_triplet)

@@ -8,16 +8,19 @@ project(${WORKSPACE_NAME})
 include(WorkspaceOptions)
 
 if(BUILD_TESTING)
-  add_packages(gtest)
+  declare_vpckg_packages(gtest)
   enable_testing()
   include(Dart)
   include(GoogleTest)
 endif()
 
-add_packages(
+declare_vpckg_packages(
   simdjson
   folly
 )
+
+
+install_declared_vpckg_packages()
 
 include(GNUInstallDirs)
 

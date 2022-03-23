@@ -56,25 +56,31 @@ set(CMAKE_TOOLCHAIN_FILE
   ${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake
   CACHE STRING "Vcpkg toolchain file")
 
-
 workspace_normalize_vcpkg_target_triplet()
+
+set(VCPKG_COMMAND_ARGS 
+    "--x-json;--triplet=${VCPKG_TARGET_TRIPLET}"
+    CACHE
+    STRING
+    "Common vcpkg command arguments"
+    FORCE
+)
 
 mark_as_advanced(FORCE
   CMAKE_TOOLCHAIN_FILE
   VCPKG_EXECUTABLE
   VCPKG_BOOTSTRAP_SCRIPT
+  VCPKG_COMMAND_ARGS
 )
 
 if(LOCAL_VCPKG_ROOT)
-  if(DEFINED CMAKE_TOOLCHAIN_FILE AND NOT EXISTS ${CMAKE_TOOLCHAIN_FILE})
-      execute_process(
+   execute_process(
         COMMAND git
         submodule
         update
         "--init"
         "--recursive"
       )
-    endif()
 endif()
 
 if(NOT EXISTS ${VCPKG_EXECUTABLE})
