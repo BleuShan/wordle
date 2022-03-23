@@ -1,7 +1,7 @@
 #ifndef WORDLE_FOUNDATION_FILESYSTEM_FILEPROVIDER_H
 #define WORDLE_FOUNDATION_FILESYSTEM_FILEPROVIDER_H
 
-#include <folly/Singleton.h>
+#include <wordle/foundation/filesystem/types.h>
 #include <wordle/prelude/prelude.h>
 
 #include <memory>
@@ -15,10 +15,18 @@ class WORDLE_PUBLIC_API FileProvider final
 
   static auto instance() -> SharedPtr;
 
+  template <typename... Args>
+  static auto create(Args&&... args) {
+    return SharedPtr{new FileProvider{std::forward<Args>(args)...}};
+  }
  private:
-  FileProvider() = default;
-  friend class folly::Singleton<FileProvider>;
+  FileProvider(const FilePath& path);
+
+  friend auto createDefaultFileProvider() -> FileProvider*;
+  FilePath path_;
 };
+
+WORDLE_PRIVATE_API auto createDefaultFileProvider() -> FileProvider*;
 
 }  // namespace wordle::foundation::filesystem
 

@@ -1,5 +1,6 @@
 add_sources(
   PUBLIC
-  filesystem.h
   FileProvider.h
+  filesystem.h
+  types.h
 )
