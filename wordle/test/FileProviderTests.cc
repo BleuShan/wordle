@@ -9,4 +9,8 @@ TEST(FileProvider, instance) {
   ASSERT_EQ(provider, FileProvider::instance());
 }
 
+TEST(FileProvider, directory) {
+  auto provider = FileProvider::instance();
+}
+
 }  // namespace wordle::foundation::filesystem::tests

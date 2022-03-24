@@ -1,11 +1,9 @@
 cmake_minimum_required(VERSION 3.22)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
 
-include(WorkspaceEnvironment)
+include(Workspace)
 
 project(${WORKSPACE_NAME})
-
-include(WorkspaceOptions)
 
 if(BUILD_TESTING)
   declare_vpckg_packages(gtest)
