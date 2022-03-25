@@ -4,10 +4,10 @@
 #include <concepts>
 
 namespace wordle::foundation::concepts {
-template <class From, class To>
+template <typename From, typename To>
 concept ConvertibleTo = std::convertible_to<From, To>;
 
-template <class From, class To>
+template <typename From, typename To>
 concept ConvertibleFrom = std::convertible_to<To, From>;
 }  // namespace wordle::foundation::concepts
 

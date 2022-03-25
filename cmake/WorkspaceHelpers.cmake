@@ -117,6 +117,7 @@ function(workspace_helpers_set_target_cxx_properties name)
         CXX_STANDARD ${standard}
         CXX_STANDARD_REQUIRED ON
         CXX_EXTENSIONS OFF
+        VISIBILITY_PRESET hidden
     )
 endfunction()
 

@@ -15,11 +15,12 @@ using JsonObject = simdjson::ondemand::object;
 using JsonPaddedString = simdjson::padded_string;
 using JsonPaddedStringView = simdjson::padded_string_view;
 using JsonParser = simdjson::ondemand::parser;
-template <class Value>
-using JsonResult = simdjson::simdjson_result<Value>;
 using JsonStream = simdjson::ondemand::document_stream;
 using JsonType = simdjson::ondemand::json_type;
 using JsonValue = simdjson::ondemand::value;
+
+template <typename Value>
+using JsonResult = simdjson::simdjson_result<Value>;
 }  // namespace wordle::foundation::json
 
 #endif

@@ -4,19 +4,19 @@
 #include <concepts>
 
 namespace wordle::foundation::concepts {
-template <class Type, class... Args>
+template <typename Type, typename... Args>
 concept ConstructibleFrom = std::constructible_from<Type, Args...>;
 
-template <class Type>
+template <typename Type>
 concept CopyConstructible = std::copy_constructible<Type>;
 
-template <class Type>
+template <typename Type>
 concept MoveConstructible = std::move_constructible<Type>;
 
-template <class Type>
+template <typename Type>
 concept DefaultInitializable = std::default_initializable<Type>;
 
-template<class Type>
+template <typename Type>
 concept Destructible = std::destructible<Type>;
 
 }  // namespace wordle::foundation::concepts

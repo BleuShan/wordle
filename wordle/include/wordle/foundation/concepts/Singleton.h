@@ -5,7 +5,7 @@
 #include <wordle/foundation/concepts/reflection.h>
 
 namespace wordle::foundation::concepts {
-template <class Type>
+template <typename Type>
 concept Singleton = Shareable<Type> && requires {
   { Type::instance() } -> SameAs<typename Type::SharedPtr>;
 };

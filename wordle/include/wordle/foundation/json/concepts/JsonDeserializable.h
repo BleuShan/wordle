@@ -6,7 +6,7 @@
 #include <wordle/foundation/json/types.h>
 
 namespace wordle::foundation::concepts {
-template <class Type>
+template <typename Type>
 concept JsonDeserializable = Shareable<Type> &&
     JsonDeserializer<Type, typename Type::JsonDeserializer> ||
     JsonDeserializer<typename Type::SharedPtr, typename Type::JsonDeserializer>;

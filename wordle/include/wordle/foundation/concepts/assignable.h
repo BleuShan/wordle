@@ -4,16 +4,16 @@
 #include <concepts>
 
 namespace wordle::foundation::concepts {
-template <class To, class From>
+template <typename To, typename From>
 concept AssignableFrom = std::assignable_from<To, From>;
 
-template <class From, class To>
+template <typename From, typename To>
 concept AssignableTo = std::assignable_from<To, From>;
 
-template <class Type>
+template <typename Type>
 concept Copyable = std::copyable<Type>;
 
-template <class Type>
+template <typename Type>
 concept NonCopyable = !std::copyable<Type>;
 
 }  // namespace wordle::foundation::concepts

@@ -3,3 +3,4 @@ ColumnLimit: 80
 IndentPPDirectives: BeforeHash
 AllowShortFunctionsOnASingleLine: Inline
 Standard: c++20
+IncludeBlocks: Preserve

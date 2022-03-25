@@ -4,7 +4,7 @@ include(WorkspaceUtilities)
 
 function(declare_vpckg_packages)
   list(APPEND declared_vcpkg_packages $CACHE{VCPKG_DECLARED_PACKAGES} ${ARGV})
-  list(REMOVE_DUPLICATES declared_packages)
+  list(REMOVE_DUPLICATES declared_vcpkg_packages)
   set(VCPKG_DECLARED_PACKAGES ${declared_vcpkg_packages} CACHE INTERNAL "List of declared packages" FORCE)
 endfunction()
 

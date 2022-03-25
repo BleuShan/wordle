@@ -1,6 +1,9 @@
 add_sources(
   PUBLIC
-  FileProvider.h
+  DirectoryContents.h
+  FileInfo.h
   filesystem.h
   types.h
 )
+
+add_subdirectory(FileProvider)

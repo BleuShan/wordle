@@ -1,4 +1,6 @@
 add_sources(
   PRIVATE
-  FileProvider.cc
+  DirectoryContents.cc
 )
+
+add_subdirectory(providers)

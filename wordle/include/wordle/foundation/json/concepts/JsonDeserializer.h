@@ -5,7 +5,7 @@
 #include <wordle/foundation/json/types.h>
 
 namespace wordle::foundation::concepts {
-template <class Output, class Type>
+template <typename Output, typename Type>
 concept JsonDeserializer = requires(Type instance,
                                     json::JsonPaddedStringView rawJson) {
   { instance.deserialize(rawJson) } -> SameAs<Output>;
