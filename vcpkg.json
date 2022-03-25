@@ -1,0 +1,17 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg/master/scripts/vcpkg.schema.json",
+  "name": "wordle",
+  "version-string": "0.1.0",
+  "dependencies": [
+    {
+      "name": "folly"
+    },
+    {
+      "name": "gtest"
+    },
+    {
+      "name": "simdjson",
+      "features": ["exceptions", "threads"]
+    }
+  ]
+}

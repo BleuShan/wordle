@@ -6,17 +6,11 @@ using wordle::foundation::filesystem::providers::details::
     PhysicalFileProviderContext;
 
 static auto DefaultFileProvider =
-    FileProvider::Builder::create([](auto builder) {
-      builder
-          ->context([]() {
-            return PhysicalFileProviderContext::create(
-                std::filesystem::current_path());
-          })
-          ->teardown([](auto provider) { printf("shutting down"); });
-    });
+    FileProvider::singleton<PhysicalFileProviderContext>(
+        std::filesystem::current_path());
 
-FileProvider::FileProvider(const FileProvider::Builder& builder)
-    : context_{builder.context()} {}
+FileProvider::FileProvider(details::FileProviderContext* context)
+    : context_{context} {}
 
 auto FileProvider::currentDirectory() -> FileProvider::SharedPtr {
   return DefaultFileProvider.try_get();

@@ -10,6 +10,7 @@
 namespace wordle::foundation::filesystem::providers::details {
 class WORDLE_PUBLIC_API FileProviderContext {
  public:
+  virtual ~FileProviderContext() = default;
   virtual auto getDirectoryContents() const -> DirectoryContents::SharedPtr = 0;
   virtual auto path() const -> const FilePath = 0;
 

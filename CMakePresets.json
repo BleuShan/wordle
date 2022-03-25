@@ -1,0 +1,98 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 22
+  },
+  "configurePresets": [
+    {
+      "name": "default",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build",
+      "toolchainFile": "${sourceDir}/vcpkg/scripts/buildsystems/vcpkg.cmake",
+      "installDir": "${sourceDir}/dist",
+      "hidden": true
+    },
+    {
+      "name": "debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+      },
+      "hidden": true
+    },
+    {
+      "name": "release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      },
+      "hidden": true
+    },
+    {
+      "name": "dynamic",
+      "hidden": true,
+      "cacheVariables": {
+        "BUILD_SHARED_LIBS": {
+          "type": "boolean",
+          "value": true
+        }
+      }
+    },
+    {
+      "name": "osx",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Darwin"
+      },
+      "hidden": true
+    },
+    {
+      "name": "osx-dynamic",
+      "inherits": ["osx", "dynamic"],
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": {
+          "type": "string",
+          "value": "x64-osx-dynamic"
+        }
+      },
+      "hidden": true
+    },
+    {
+      "name": "windows",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      },
+      "hidden": true
+    },
+    {
+      "name": "windows-dynamic",
+      "inherits": ["default", "windows", "dynamic", "debug"]
+    },
+    {
+      "name": "windows-dynamic-rel",
+      "inherits": ["default", "windows", "dynamic", "release"]
+    },
+    {
+      "name": "osx-dynamic-debug",
+      "inherits": ["default", "osx-dynamic", "debug"]
+    },
+    {
+      "name": "osx-dynamic-rel",
+      "inherits": ["default", "osx-dynamic", "release"]
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "default",
+      "inheritConfigureEnvironment": true
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "default",
+      "inheritConfigureEnvironment": true
+    }
+  ]
+}

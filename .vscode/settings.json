@@ -49,6 +49,9 @@
     "__config": "cpp",
     "concepts": "cpp",
     "string_view": "cpp",
-    "cstdint": "cpp"
+    "cstdint": "cpp",
+    "string": "cpp",
+    "*.ipp": "cpp",
+    "exception": "cpp"
   }
 }

@@ -5,6 +5,9 @@
 #include <system_error>
 
 namespace wordle::foundation::concepts {
+template <typename Derived, typename Base>
+concept DerivedFrom = std::derived_from<Derived, Base>;
+
 template <typename A, typename B>
 concept SameAs = std::same_as<A, B>;
 

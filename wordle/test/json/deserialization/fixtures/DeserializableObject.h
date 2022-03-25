@@ -6,7 +6,7 @@
 #include <memory>
 #include <unordered_set>
 
-namespace wordle::foundation::json::tests::fixtures {
+namespace wordle::foundation::json::deserialization::tests::fixtures {
 
 class DeserializableObject final
     : public std::enable_shared_from_this<DeserializableObject> {
@@ -18,10 +18,11 @@ class DeserializableObject final
 
   class JsonDeserializer final {
    public:
-    auto deserialize(JsonPaddedStringView rawJson) -> SharedPtr;
+    auto deserialize(PaddedStringView rawJson) -> SharedPtr;
 
    private:
-    std::unique_ptr<JsonParser> parser_ = std::make_unique<JsonParser>();
+    std::unique_ptr<deserialization::JsonParser> parser_ =
+        std::make_unique<deserialization::JsonParser>();
     const std::unordered_set<StringView> fieldNames_ = {"id"};
   };
 
@@ -30,5 +31,5 @@ class DeserializableObject final
   DeserializableObject() = default;
 };
 
-}  // namespace wordle::foundation::json::tests::fixtures
+}  // namespace wordle::foundation::json::deserialization::tests::fixtures
 #endif

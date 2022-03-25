@@ -3,7 +3,7 @@
 
 #include "fixtures/DeserializableObject.h"
 
-namespace wordle::foundation::json::tests {
+namespace wordle::foundation::json::deserialization::tests {
 
 TEST(Json, deserialize) {
   constexpr const auto data = R"({"id": 1})"sv;
@@ -19,4 +19,4 @@ TEST(Json, deserialize) {
   ASSERT_EQ(stringId->id(), 2);
 }
 
-}  // namespace wordle::foundation::json::tests
+}  // namespace wordle::foundation::json::deserialization::tests

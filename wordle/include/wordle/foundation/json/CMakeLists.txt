@@ -1,8 +1,9 @@
 add_sources(
   PUBLIC
   json.h
-  json-inl.h
+  deserialize.h
   types.h
 )
 
 add_subdirectory(concepts)
+add_subdirectory(deserialization)

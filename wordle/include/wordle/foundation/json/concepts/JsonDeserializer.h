@@ -6,8 +6,7 @@
 
 namespace wordle::foundation::concepts {
 template <typename Output, typename Type>
-concept JsonDeserializer = requires(Type instance,
-                                    json::JsonPaddedStringView rawJson) {
+concept JsonDeserializer = requires(Type instance, PaddedStringView rawJson) {
   { instance.deserialize(rawJson) } -> SameAs<Output>;
 };
 }  // namespace wordle::foundation::concepts

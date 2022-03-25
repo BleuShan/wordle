@@ -2,10 +2,10 @@
 
 #include <wordle/foundation/foundation.h>
 
-namespace wordle::foundation::json::tests::fixtures {
+namespace wordle::foundation::json::deserialization::tests::fixtures {
 
 auto DeserializableObject::JsonDeserializer::deserialize(
-    JsonPaddedStringView rawJson) -> SharedPtr {
+    PaddedStringView rawJson) -> SharedPtr {
   auto document = parser_->iterate(rawJson);
   JsonObject root = document.get_object();
   SharedPtr instance{nullptr};
@@ -37,4 +37,4 @@ auto DeserializableObject::JsonDeserializer::deserialize(
 
   return instance;
 }
-}  // namespace wordle::foundation::json::tests::fixtures
+}  // namespace wordle::foundation::json::deserialization::tests::fixtures
