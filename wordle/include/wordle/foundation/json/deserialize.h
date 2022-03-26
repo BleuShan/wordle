@@ -25,7 +25,7 @@ template <concepts::JsonDeserializable Output>
 auto deserialize(foundation::StringView rawJson) {
   PaddedString paddedRawJson{rawJson};
 
-  return deserialize<Output>(paddedRawJson);
+  return deserialize<Output>(static_cast<PaddedStringView>(paddedRawJson));
 }
 
 }  // namespace wordle::foundation::json

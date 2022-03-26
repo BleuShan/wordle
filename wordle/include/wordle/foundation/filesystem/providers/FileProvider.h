@@ -38,7 +38,7 @@ class WORDLE_PUBLIC_API FileProvider final
 
  private:
   explicit FileProvider(details::FileProviderContext* context);
-  ConstAwareStdUniquePtr<details::FileProviderContext> context_;
+  StdUniquePtr<details::FileProviderContext> context_;
 };
 
 }  // namespace wordle::foundation::filesystem::providers
