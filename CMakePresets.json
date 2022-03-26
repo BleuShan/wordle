@@ -82,17 +82,5 @@
       "name": "osx-dynamic-rel",
       "inherits": ["default", "osx-dynamic", "release"]
     }
-  ],
-  "buildPresets": [
-    {
-      "name": "default",
-      "inheritConfigureEnvironment": true
-    }
-  ],
-  "testPresets": [
-    {
-      "name": "default",
-      "inheritConfigureEnvironment": true
-    }
   ]
 }
